@@ -58,8 +58,6 @@ def main():
     Creates a Sheets API service object and prints the names and majors of
     students in a sample spreadsheet:
     https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-    write to sheet:
-    https://docs.google.com/spreadsheets/d/11kGYQ5KETYbuVOlOAYt9Q9_6xOV2CCbAq0sKstk8-lY/edit
     """
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
@@ -68,10 +66,8 @@ def main():
     service = discovery.build('sheets', 'v4', http=http,
                               discoveryServiceUrl=discoveryUrl)
 
-
     spreadsheetId = '1IaO33cnRu_vVVCjN4yPrGnlUP1t7L46Y7MISAAAIC3c'
     rangeName = 'Invoice!A2:H'
-
     result = service.spreadsheets().values().get(
         spreadsheetId=spreadsheetId, range=rangeName).execute()
     values = result.get('values', [])
@@ -83,6 +79,7 @@ def main():
         for row in values:
             # Print columns A and E, which correspond to indices 0 and 4.
             print('%s' %row)
+        
 ##read sheets for week1 # of days and week2 # of days.
  ##write to sheet example here   
     values = [[week1],[week2]]
