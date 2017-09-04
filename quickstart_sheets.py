@@ -15,10 +15,14 @@ except ImportError:
 
 # If modifying these scopes, delete your previously saved credentials
 # at ~/.credentials/sheets.googleapis.com-python-quickstart.json
-SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly'
-CLIENT_SECRET_FILE = 'client_secret.json'
+SCOPES = 'https://www.googleapis.com/auth/spreadsheets'
+#SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly'
+CLIENT_SECRET_FILE = 'D:\My Documents\GitHub\GsheetAPI\client_secret.json'
 APPLICATION_NAME = 'Google Sheets API Python Quickstart'
 
+ 
+  
+ 
 
 def get_credentials():
     """Gets valid user credentials from storage.
@@ -35,7 +39,7 @@ def get_credentials():
         os.makedirs(credential_dir)
     credential_path = os.path.join(credential_dir,
                                    'sheets.googleapis.com-python-quickstart.json')
-
+    print(credential_path)
     store = Storage(credential_path)
     credentials = store.get()
     if not credentials or credentials.invalid:
@@ -62,8 +66,8 @@ def main():
     service = discovery.build('sheets', 'v4', http=http,
                               discoveryServiceUrl=discoveryUrl)
 
-    spreadsheetId = '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms'
-    rangeName = 'Class Data!A2:E'
+    spreadsheetId = '1IaO33cnRu_vVVCjN4yPrGnlUP1t7L46Y7MISAAAIC3c'
+    rangeName = 'Invoice!A2:H'
     result = service.spreadsheets().values().get(
         spreadsheetId=spreadsheetId, range=rangeName).execute()
     values = result.get('values', [])
@@ -74,7 +78,16 @@ def main():
         print('Name, Major:')
         for row in values:
             # Print columns A and E, which correspond to indices 0 and 4.
-            print('%s, %s' % (row[0], row[4]))
+            print('%s' %row)
+##read sheets for week1 # of days and week2 # of days.
+ ##write to sheet example here   
+    values = [[week1],[week2]]
+    value_input_option='RAW'
+    body = {'values': values}
+    rangeName = 'Invoice!E19'
+    result = service.spreadsheets().values().update(spreadsheetId=spreadsheetId, range=rangeName,valueInputOption=value_input_option, body=body).execute()
+    print(result)
+
 
 
 if __name__ == '__main__':
