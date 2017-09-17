@@ -81,8 +81,13 @@ def main():
             print('%s' %row)
         
 ##read sheets for week1 # of days and week2 # of days.
+
+
+
  ##write to sheet example here   
-    values = [[week1],[week2]]
+    qty_week1 = 6
+    qty_week2 = 6
+    values = [[qty_week1],[qty_week2]]
     value_input_option='RAW'
     body = {'values': values}
     rangeName = 'Invoice!E19'
