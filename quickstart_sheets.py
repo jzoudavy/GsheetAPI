@@ -107,7 +107,19 @@ def main():
     rangeName = 'Invoice!B19'
     result = service.spreadsheets().values().update(spreadsheetId=spreadsheetId, range=rangeName,valueInputOption=value_input_option, body=body).execute()
 
+    #set invoice ID to be iso_week_value instead, write to cell F12
+     
+    result = service.spreadsheets().values().get(spreadsheetId=spreadsheetId, range='Invoice!F12').execute()
+    print('Our invoice result is: ',result)
+    print('Our invoice result key is values: ',result['values'])
+    invoice_ID = int(result['values'][0][0])
+    invoice_ID +=1
 
+    print('New ID is ',invoice_ID)
+    
+    body = {'values': str(invoice_ID)}
+    result = service.spreadsheets().values().update(spreadsheetId=spreadsheetId, range='Invoice!F12',valueInputOption=value_input_option, body=body).execute()
+    #body = {'values': }}
 
 if __name__ == '__main__':
     main()
