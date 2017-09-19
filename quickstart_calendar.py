@@ -10,6 +10,12 @@ from oauth2client.file import Storage
 import datetime
 import pytz
 import calendar
+from isoweek import Week
+
+
+
+
+
 
 
 ###get time
@@ -43,40 +49,7 @@ except ImportError:
 SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
 CLIENT_SECRET_FILE = '.client_secret_calendar.json'
 APPLICATION_NAME = 'Google Calendar API Python Quickstart'
-
-def iso_week_num_to_date_range(iso_week, month, year, date_of_work):
-    calen = calendar.Calendar()
-    calen=list(calen.itermonthdates(year, month))
-    #_max_y = len(calen)
-    _i=0
-     
-    week1_start = calen[0]
-    week1_end = calen[6]
-    week2_start = calen[7]
-    week2_end = calen[13]
-    week3_start= calen[14]
-    week3_end = calen[20]
-    week4_start = calen[21]
-    week4_end = calen[len(calen)-1]
-
-    print (week1_start, week1_end, week2_start, week2_end, week3_start, week3_end, week4_start, week4_end)
-    
-    print("date of work is ",date_of_work)
-    for i in calen:
-        
-        if str(i)== date_of_work:
-            print ("we got a match")
-            
-        print(_i)
-        if 0<_i<6:
-            return str(week1_start)+" to "+str(week1_end)
-        elif 7<_i<13:
-            return str(week2_start)+" to "+str(week2_end)
-        elif 14<_i<20:
-            return str(week3_start)+" to "+str(week3_end)
-        elif 21<_i<len(calen):
-            return str(week4_start)+" to "+str(week4_end)
-        _i+=1
+ 
 
 def get_credentials():
     """Gets valid user credentials from storage.
@@ -126,16 +99,17 @@ def main():
     
     if not events:
         print('No upcoming events found.')
-    i =0
+    
     iso_week1 =0
-    iso_week2 =1
+    iso_week2 =0
     occurance_week1 = 0
     occurance_week2 = 0
     for event in events:
-        print('this is '+str(i)+'th event.')
+        #print('this is '+str(i)+'th event.')
         if event['summary'] == 'MS work':
             start = event['start'].get('dateTime', event['start'].get('date'))
             print(start,"--",event['summary'])
+            print("*"*50)
  
             work_year,work_month,work_day = start.split('-')
 
@@ -150,22 +124,35 @@ def main():
             iso_week= datetime.date(work_year, work_month, work_day).isocalendar()[1]
             #print (iso_week)
             if iso_week == current_iso_week:
+                
                 iso_week1=iso_week
+                print("First week is ",iso_week1)
                 occurance_week1+=1
-                week_range1=iso_week_num_to_date_range(iso_week1, work_month, work_year, start)
+                w=Week(work_year, iso_week1)
+                
+                week_range1_Mon = w.monday().isoformat()
+                week_range1_Sun = w.sunday().isoformat()
+                print ("First week's range is ", week_range1_Mon, " to ",week_range1_Sun)
             if iso_week == current_iso_week+1:
+            
                 iso_week2=iso_week
+                print("Second week is ",iso_week2)
                 occurance_week2+=1
-                week_range2=iso_week_num_to_date_range(iso_week1, work_month, work_year, start)
+                w=Week(work_year, iso_week2)
+                
+                week_range2_Mon = w.monday().isoformat()
+                week_range2_Sun = w.sunday().isoformat()
+                print ("Second week's range is ", week_range2_Mon, " to ",week_range2_Sun)
 
             #we ignore anything but the next two weeks.
-            
-        i+=1
-    print ("The first week is week # ",iso_week1,", it is from ",week_range1,". We worked ",occurance_week1," days.")
-    print ("The second week is week # ",iso_week2,", it is from ",week_range2,". We worked ",occurance_week2," days.")
-
-
-
+       
+    #print ("The first week is week # ",iso_week1,", it is from ",week_range1,". We worked ",occurance_week1," days.")
+    #print ("The second week is week # ",iso_week2,", it is from ",week_range2,". We worked ",occurance_week2," days.")
+    week_range1=week_range1_Mon+" to "+week_range1_Sun
+    week_range2=week_range2_Mon+" to "+week_range2_Sun
+    return week_range1,week_range2,occurance_week1,occurance_week2
+ 
 
 if __name__ == '__main__':
     main()
+    

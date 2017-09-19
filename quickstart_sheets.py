@@ -6,6 +6,7 @@ from apiclient import discovery
 from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
+
 import quickstart_calendar
 
 try:
@@ -18,7 +19,7 @@ except ImportError:
 # at ~/.credentials/sheets.googleapis.com-python-quickstart.json
 SCOPES = 'https://www.googleapis.com/auth/spreadsheets'
 #SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly'
-CLIENT_SECRET_FILE = 'D:\My Documents\GitHub\GsheetAPI\client_secret.json'
+CLIENT_SECRET_FILE = 'D:\My Documents\GitHub\GsheetAPI\client_secret_sheets.json'
 APPLICATION_NAME = 'Google Sheets API Python Quickstart'
 
  
@@ -86,18 +87,25 @@ def main():
         
 
 ##read sheets for week1 # of days and week2 # of days.
+    week_range1,week_range2,return_occurance_week1,return_occurance_week2 = quickstart_calendar.main()
+    print ("We got the following: "+week_range1,week_range2,return_occurance_week1,return_occurance_week2)
+
+ ##write to sheet example here  
 
 
-
- ##write to sheet example here   
-    qty_week1 = 6
-    qty_week2 = 6
+    qty_week1 = return_occurance_week1
+    qty_week2 = return_occurance_week2
     values = [[qty_week1],[qty_week2]]
     value_input_option='RAW'
     body = {'values': values}
     rangeName = 'Invoice!E19'
     result = service.spreadsheets().values().update(spreadsheetId=spreadsheetId, range=rangeName,valueInputOption=value_input_option, body=body).execute()
     print(result)
+
+    week_range_value=[[week_range1],[week_range2]]
+    body = {'values': week_range_value}
+    rangeName = 'Invoice!B19'
+    result = service.spreadsheets().values().update(spreadsheetId=spreadsheetId, range=rangeName,valueInputOption=value_input_option, body=body).execute()
 
 
 
