@@ -46,21 +46,20 @@ def get_last_spreadsheetId():
     service = discovery.build('drive', 'v3', http=http)
 
     results = service.files().list(
-        pageSize=20,fields="nextPageToken, files(id, name)").execute()
+        pageSize=20,fields="nextPageToken, files(modifiedTime, name, id)").execute()
     items = results.get('files', [])
     if not items:
         print('No files found.')
     else:
         print('Files:')
         for item in items:
-            print('{0} ({1})'.format(item['name'], item['id']))
-            if item['id'] == '1IaO33cnRu_vVVCjN4yPrGnlUP1t7L46Y7MISAAAIC3c':
-                print ('We found sample file now copying it')
-                print(item)
+            #print('This item is', item)
+            if 'Invoice' in item['name']:
+                print('We found the invoices: ')
+                print('{0} {1} {2}'.format(item['name'], item['modifiedTime'],item['id']))
 
-                newfile=copy_file(service, item['id'], new_invoice_filename)
-    print('new file id is ',newfile['id'])
-    return newfile['id'] 
+        return items[0]['id']
+                
 
 
 

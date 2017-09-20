@@ -28,8 +28,9 @@ APPLICATION_NAME = 'Google Sheets API Python Quickstart'
 
  
 def get_last_id():
+    print("Getting Last invoice spreadsheetID")
     last_spreadsheetId=quickstart_drive.get_last_spreadsheetId()
-
+    return last_spreadsheetId
  
 
 def get_credentials():
@@ -68,12 +69,7 @@ def main():
     print ("We got the following: "+week_range1,week_range2,return_occurance_week1,return_occurance_week2)
     new_invoice_filename = 'Invoice '+week_range1.split(' ')[0]+' to '+week_range2.split(' ')[2]
 
-    """Shows basic usage of the Sheets API.
-
-    Creates a Sheets API service object and prints the names and majors of
-    students in a sample spreadsheet:
-    https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-    """
+    
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?'
@@ -121,9 +117,9 @@ def main():
     rangeName = 'Invoice!B19'
     result = service.spreadsheets().values().update(spreadsheetId=spreadsheetId, range=rangeName,valueInputOption=value_input_option, body=body).execute()
 
-    #set invoice ID to be iso_week_value instead, write to cell F12
-     
-    result = service.spreadsheets().values().get(spreadsheetId=spreadsheetId, range='Invoice!F12').execute()
+    #set invoice ID to be from the Invoice field of last spreadsheet created, write to cell F12
+    last_spreadsheetId=get_last_id() 
+    result = service.spreadsheets().values().get(spreadsheetId=last_spreadsheetId, range='Invoice!F12').execute()
     print('Our invoice result is: ',result)
     print('Our invoice result key is values: ',result['values'])
     invoice_ID = int(result['values'][0][0])

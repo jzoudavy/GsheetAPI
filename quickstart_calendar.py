@@ -15,9 +15,6 @@ from isoweek import Week
 
 
 
-
-
-
 ###get time
 
 d = datetime.datetime.now()
