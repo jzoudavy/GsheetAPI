@@ -1,3 +1,6 @@
+#sheets calls calendar to get the right dates
+#sheets calls drive to get the right file and create the right file.
+
 from __future__ import print_function
 import httplib2
 import os
@@ -8,6 +11,7 @@ from oauth2client import tools
 from oauth2client.file import Storage
 
 import quickstart_calendar
+import quickstart_drive
 
 try:
     import argparse
@@ -55,6 +59,13 @@ def get_credentials():
     return credentials
 
 def main():
+    
+    
+    ##read calendar for week1 # of days and week2 # of days.
+    week_range1,week_range2,return_occurance_week1,return_occurance_week2 = quickstart_calendar.main()
+    print ("We got the following: "+week_range1,week_range2,return_occurance_week1,return_occurance_week2)
+    new_invoice_filename = week_range1.split(' ')[0]+' to '+week_range2.split(' ')[1]
+
     """Shows basic usage of the Sheets API.
 
     Creates a Sheets API service object and prints the names and majors of
@@ -68,7 +79,9 @@ def main():
     service = discovery.build('sheets', 'v4', http=http,
                               discoveryServiceUrl=discoveryUrl)
 
-    spreadsheetId = '1IaO33cnRu_vVVCjN4yPrGnlUP1t7L46Y7MISAAAIC3c'
+    spreadsheetId=quickstart_drive.main(new_invoice_filename)
+    print('new spreadsheet id is ',spreadsheetId)
+    
     rangeName = 'Invoice!A2:H'
     result = service.spreadsheets().values().get(
         spreadsheetId=spreadsheetId, range=rangeName).execute()
@@ -82,15 +95,14 @@ def main():
             # Print columns A and E, which correspond to indices 0 and 4.
             print('%s' %row)
 
-
-##read Invocie number, increment it
-        
+ 
 
 ##read sheets for week1 # of days and week2 # of days.
     week_range1,week_range2,return_occurance_week1,return_occurance_week2 = quickstart_calendar.main()
     print ("We got the following: "+week_range1,week_range2,return_occurance_week1,return_occurance_week2)
 
- ##write to sheet example here  
+ ##write to sheet  
+
 
 
     qty_week1 = return_occurance_week1
@@ -114,12 +126,16 @@ def main():
     print('Our invoice result key is values: ',result['values'])
     invoice_ID = int(result['values'][0][0])
     invoice_ID +=1
+    result['values'][0][0] = invoice_ID
 
     print('New ID is ',invoice_ID)
     
-    body = {'values': str(invoice_ID)}
+    body = result
     result = service.spreadsheets().values().update(spreadsheetId=spreadsheetId, range='Invoice!F12',valueInputOption=value_input_option, body=body).execute()
-    #body = {'values': }}
+    
+    
+
+
 
 if __name__ == '__main__':
     main()
