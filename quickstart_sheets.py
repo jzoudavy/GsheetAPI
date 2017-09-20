@@ -27,7 +27,9 @@ CLIENT_SECRET_FILE = 'D:\My Documents\GitHub\GsheetAPI\client_secret_sheets.json
 APPLICATION_NAME = 'Google Sheets API Python Quickstart'
 
  
-  
+def get_last_id():
+    last_spreadsheetId=quickstart_drive.get_last_spreadsheetId()
+
  
 
 def get_credentials():
@@ -64,7 +66,7 @@ def main():
     ##read calendar for week1 # of days and week2 # of days.
     week_range1,week_range2,return_occurance_week1,return_occurance_week2 = quickstart_calendar.main()
     print ("We got the following: "+week_range1,week_range2,return_occurance_week1,return_occurance_week2)
-    new_invoice_filename = week_range1.split(' ')[0]+' to '+week_range2.split(' ')[1]
+    new_invoice_filename = 'Invoice '+week_range1.split(' ')[0]+' to '+week_range2.split(' ')[2]
 
     """Shows basic usage of the Sheets API.
 
@@ -78,7 +80,7 @@ def main():
                     'version=v4')
     service = discovery.build('sheets', 'v4', http=http,
                               discoveryServiceUrl=discoveryUrl)
-
+    #make a copy of sample invoice and return its spreadsheet id
     spreadsheetId=quickstart_drive.main(new_invoice_filename)
     print('new spreadsheet id is ',spreadsheetId)
     
@@ -129,7 +131,7 @@ def main():
     result['values'][0][0] = invoice_ID
 
     print('New ID is ',invoice_ID)
-    
+    #update invoice id.
     body = result
     result = service.spreadsheets().values().update(spreadsheetId=spreadsheetId, range='Invoice!F12',valueInputOption=value_input_option, body=body).execute()
     

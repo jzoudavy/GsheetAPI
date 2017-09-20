@@ -39,6 +39,29 @@ def copy_file(service, origin_file_id, copy_title):
         print ('An error occurred: %s' % error)
     return None
 
+#get last created spreadsheet's ID
+def get_last_spreadsheetId():
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    service = discovery.build('drive', 'v3', http=http)
+
+    results = service.files().list(
+        pageSize=20,fields="nextPageToken, files(id, name)").execute()
+    items = results.get('files', [])
+    if not items:
+        print('No files found.')
+    else:
+        print('Files:')
+        for item in items:
+            print('{0} ({1})'.format(item['name'], item['id']))
+            if item['id'] == '1IaO33cnRu_vVVCjN4yPrGnlUP1t7L46Y7MISAAAIC3c':
+                print ('We found sample file now copying it')
+                print(item)
+
+                newfile=copy_file(service, item['id'], new_invoice_filename)
+    print('new file id is ',newfile['id'])
+    return newfile['id'] 
+
 
 
 def get_credentials():
@@ -93,7 +116,8 @@ def main(new_invoice_filename):
 
                 newfile=copy_file(service, item['id'], new_invoice_filename)
     print('new file id is ',newfile['id'])
-    return newfile['id']             
+    return newfile['id'] 
+                
 
 if __name__ == '__main__':
     main()
